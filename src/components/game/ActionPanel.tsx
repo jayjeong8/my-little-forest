@@ -1,0 +1,191 @@
+'use client';
+
+import { Button } from '@/components/ui/Button';
+import { ProgressBar } from '@/components/ui/ProgressBar';
+import { CooldownTimer } from '@/components/ui/CooldownTimer';
+import { useTrees } from '@/hooks/useTrees';
+import { useSeeds } from '@/hooks/useSeeds';
+import { useTutorial } from '@/hooks/useTutorial';
+import { useToast } from '@/components/ui/Toast';
+import { SPECIES_NAMES, TIER_NAMES } from '@/lib/constants';
+import type { Tree, TilePosition } from '@/types/game';
+
+interface ActionPanelProps {
+  selectedTile: {
+    position: TilePosition;
+    tree?: Tree;
+  };
+  onClose: () => void;
+  onHarvest: (treeId: string) => void;
+  hasSeed: boolean;
+}
+
+export function ActionPanel({
+  selectedTile,
+  onClose,
+  onHarvest,
+  hasSeed,
+}: ActionPanelProps) {
+  const { tree, position } = selectedTile;
+  const { waterTree, fertilizeTree, plantSeed, canWater, canFertilize } = useTrees();
+  const { seeds } = useSeeds();
+  const { advanceTutorial, isStep } = useTutorial();
+  const { showToast } = useToast();
+
+  // 물주기 핸들러
+  const handleWater = () => {
+    if (!tree) return;
+
+    const success = waterTree(tree.id);
+    if (success) {
+      showToast('💧 물을 주었어요!', 'success');
+
+      // 튜토리얼 진행
+      if (isStep('water_tree')) {
+        advanceTutorial();
+      }
+    } else {
+      showToast('물주기 쿨다운 중이에요', 'warning');
+    }
+  };
+
+  // 비료주기 핸들러
+  const handleFertilize = () => {
+    if (!tree) return;
+
+    const success = fertilizeTree(tree.id);
+    if (success) {
+      showToast('🌿 비료를 주었어요!', 'success');
+
+      // 튜토리얼 진행
+      if (isStep('fertilize_intro')) {
+        advanceTutorial();
+      }
+    } else {
+      showToast('비료 쿨다운 중이에요', 'warning');
+    }
+  };
+
+  // 씨앗 심기 핸들러
+  const handlePlant = () => {
+    if (tree || seeds.length === 0) return;
+
+    // 첫 번째 씨앗 사용
+    const seedToPlant = seeds[0];
+    const success = plantSeed(seedToPlant.id, position);
+
+    if (success) {
+      showToast(`🌱 ${SPECIES_NAMES[seedToPlant.species]} 씨앗을 심었어요!`, 'success');
+      onClose();
+
+      // 튜토리얼 진행
+      if (isStep('plant_seed')) {
+        advanceTutorial();
+      }
+    }
+  };
+
+  // 나무가 있는 경우
+  if (tree) {
+    const isMature = tree.status === 'mature';
+    const canGrow = tree.status !== 'mature';
+
+    return (
+      <div className="mt-4 p-4 bg-white rounded-xl shadow-lg">
+        {/* 나무 정보 */}
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-bold text-lg">
+              {SPECIES_NAMES[tree.species]}
+            </h3>
+            <span className="text-sm text-gray-500">
+              {TIER_NAMES[tree.tier]}
+            </span>
+          </div>
+          <ProgressBar
+            current={tree.currentStep}
+            max={tree.requiredSteps}
+            color={isMature ? 'green' : 'blue'}
+          />
+        </div>
+
+        {/* 액션 버튼 */}
+        <div className="flex gap-2">
+          {isMature ? (
+            <Button
+              variant="success"
+              className="flex-1"
+              onClick={() => onHarvest(tree.id)}
+            >
+              🎉 수확하기
+            </Button>
+          ) : (
+            <>
+              <Button
+                variant="primary"
+                className="flex-1"
+                onClick={handleWater}
+                disabled={!canWater || !canGrow}
+              >
+                💧 물주기
+                {!canWater && <CooldownTimer type="water" className="ml-2" />}
+              </Button>
+              <Button
+                variant="secondary"
+                className="flex-1"
+                onClick={handleFertilize}
+                disabled={!canFertilize || !canGrow}
+              >
+                🌿 비료
+                {!canFertilize && (
+                  <CooldownTimer type="fertilizer" className="ml-2" />
+                )}
+              </Button>
+            </>
+          )}
+        </div>
+
+        {/* 닫기 버튼 */}
+        <button
+          onClick={onClose}
+          className="mt-3 w-full py-2 text-sm text-gray-500 hover:text-gray-700"
+        >
+          닫기
+        </button>
+      </div>
+    );
+  }
+
+  // 빈 타일인 경우
+  return (
+    <div className="mt-4 p-4 bg-white rounded-xl shadow-lg">
+      <h3 className="font-bold text-lg mb-4">빈 땅</h3>
+
+      {hasSeed ? (
+        <div>
+          <p className="text-gray-600 mb-3">
+            씨앗을 심어 나무를 키워보세요!
+          </p>
+          <Button
+            variant="success"
+            className="w-full"
+            onClick={handlePlant}
+          >
+            🌱 씨앗 심기 ({seeds.length}개 보유)
+          </Button>
+        </div>
+      ) : (
+        <p className="text-gray-500">
+          씨앗이 없어요. 광고를 시청하거나 나무를 수확해서 씨앗을 얻으세요.
+        </p>
+      )}
+
+      <button
+        onClick={onClose}
+        className="mt-3 w-full py-2 text-sm text-gray-500 hover:text-gray-700"
+      >
+        닫기
+      </button>
+    </div>
+  );
+}
