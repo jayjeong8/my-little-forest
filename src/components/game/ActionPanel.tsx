@@ -1,6 +1,7 @@
 "use client";
 
-import type { Tree, TilePosition } from "@/types/game";
+import type { Tree, TilePosition, Seed } from "@/types/game";
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { CooldownTimer } from "@/components/ui/CooldownTimer";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -8,7 +9,12 @@ import { useToast } from "@/components/ui/Toast";
 import { useSeeds } from "@/hooks/useSeeds";
 import { useTrees } from "@/hooks/useTrees";
 import { useTutorial } from "@/hooks/useTutorial";
-import { SPECIES_NAMES, TIER_NAMES } from "@/lib/constants";
+import {
+  SPECIES_NAMES,
+  TIER_NAMES,
+  TIER_COLORS,
+  TIER_BG_COLORS,
+} from "@/lib/constants";
 
 function CloseButton({ onClick }: { onClick: () => void }) {
   return (
@@ -18,6 +24,37 @@ function CloseButton({ onClick }: { onClick: () => void }) {
     >
       닫기
     </button>
+  );
+}
+
+interface SeedPickerProps {
+  seeds: Seed[];
+  selectedSeed: Seed | null;
+  onSelect: (seed: Seed) => void;
+}
+
+function SeedPicker({ seeds, selectedSeed, onSelect }: SeedPickerProps) {
+  return (
+    <div className="mb-3 max-h-40 space-y-2 overflow-y-auto">
+      {seeds.map((seed) => (
+        <button
+          key={seed.id}
+          onClick={() => onSelect(seed)}
+          className={`w-full rounded-lg p-2 text-left transition-colors ${
+            selectedSeed?.id === seed.id
+              ? "ring-2 ring-green-500 " + TIER_BG_COLORS[seed.tier]
+              : "bg-gray-50 hover:bg-gray-100"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span className="font-medium">{SPECIES_NAMES[seed.species]}</span>
+            <span className={`text-sm ${TIER_COLORS[seed.tier]}`}>
+              {TIER_NAMES[seed.tier]}
+            </span>
+          </div>
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -37,14 +74,25 @@ export function ActionPanel({
   onHarvest,
   hasSeed,
 }: ActionPanelProps) {
-  const { tree, position } = selectedTile;
-  const { waterTree, fertilizeTree, plantSeed, canWater, canFertilize } =
-    useTrees();
+  const { position } = selectedTile;
+  const {
+    waterTree,
+    fertilizeTree,
+    plantSeed,
+    canWater,
+    canFertilize,
+    getTreeAt,
+  } = useTrees();
   const { seeds } = useSeeds();
   const { advanceTutorial, isStep } = useTutorial();
   const { showToast } = useToast();
 
-  // 물주기 핸들러
+  // store에서 최신 나무 데이터 가져오기 (실시간 업데이트)
+  const tree = getTreeAt(position);
+
+  const [selectedSeedForPlanting, setSelectedSeedForPlanting] =
+    useState<Seed | null>(seeds.length > 0 ? seeds[0] : null);
+
   const handleWater = () => {
     if (!tree) return;
 
@@ -53,7 +101,6 @@ export function ActionPanel({
     if (success) {
       showToast("💧 물을 주었어요!", "success");
 
-      // 튜토리얼 진행
       if (isStep("water_tree")) {
         advanceTutorial();
       }
@@ -62,7 +109,6 @@ export function ActionPanel({
     }
   };
 
-  // 비료주기 핸들러
   const handleFertilize = () => {
     if (!tree) return;
 
@@ -71,7 +117,6 @@ export function ActionPanel({
     if (success) {
       showToast("🌿 비료를 주었어요!", "success");
 
-      // 튜토리얼 진행
       if (isStep("fertilize_intro")) {
         advanceTutorial();
       }
@@ -80,22 +125,18 @@ export function ActionPanel({
     }
   };
 
-  // 씨앗 심기 핸들러
   const handlePlant = () => {
-    if (tree || seeds.length === 0) return;
+    if (tree || !selectedSeedForPlanting) return;
 
-    // 첫 번째 씨앗 사용
-    const seedToPlant = seeds[0];
-    const success = plantSeed(seedToPlant.id, position);
+    const success = plantSeed(selectedSeedForPlanting.id, position);
 
     if (success) {
       showToast(
-        `🌱 ${SPECIES_NAMES[seedToPlant.species]} 씨앗을 심었어요!`,
+        `🌱 ${SPECIES_NAMES[selectedSeedForPlanting.species]} 씨앗을 심었어요!`,
         "success",
       );
       onClose();
 
-      // 튜토리얼 진행
       if (isStep("plant_seed")) {
         advanceTutorial();
       }
@@ -167,9 +208,19 @@ export function ActionPanel({
 
       {hasSeed ? (
         <div>
-          <p className="mb-3 text-gray-600">씨앗을 심어 나무를 키워보세요!</p>
-          <Button variant="success" className="w-full" onClick={handlePlant}>
-            🌱 씨앗 심기 ({seeds.length}개 보유)
+          <p className="mb-3 text-gray-600">심을 씨앗을 선택하세요</p>
+          <SeedPicker
+            seeds={seeds}
+            selectedSeed={selectedSeedForPlanting}
+            onSelect={setSelectedSeedForPlanting}
+          />
+          <Button
+            variant="success"
+            className="w-full"
+            onClick={handlePlant}
+            disabled={!selectedSeedForPlanting}
+          >
+            🌱 씨앗 심기
           </Button>
         </div>
       ) : (
