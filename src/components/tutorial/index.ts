@@ -1,1 +1,1 @@
-export { TutorialOverlay, TutorialStartScreen } from "./TutorialOverlay";
+export { TutorialOverlay } from "./TutorialOverlay";
