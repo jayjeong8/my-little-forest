@@ -1,9 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { MockAdButton } from "@/components/ads";
 import { ForestGrid } from "@/components/game";
 import { SeedInventory } from "@/components/inventory";
-import { TutorialOverlay, TutorialStartScreen } from "@/components/tutorial";
+import { TutorialOverlay } from "@/components/tutorial";
 import { useTutorial } from "@/hooks/useTutorial";
 import { useGameStore } from "@/stores/gameStore";
 
@@ -54,13 +55,12 @@ export default function Home() {
   const { isNotStarted, startTutorial } = useTutorial();
   const trees = useGameStore((state) => state.trees);
 
-  // 처음 방문 시 튜토리얼 시작 화면 표시
-  // 단, 이미 나무가 있거나 튜토리얼을 완료한 경우는 제외
-  const showStartScreen = isNotStarted && trees.length === 0;
-
-  if (showStartScreen) {
-    return <TutorialStartScreen onStart={startTutorial} />;
-  }
+  // 첫 방문자: 자동으로 튜토리얼 시작
+  useEffect(() => {
+    if (isNotStarted && trees.length === 0) {
+      startTutorial();
+    }
+  }, [isNotStarted, trees.length, startTutorial]);
 
   return <GameScreen />;
 }
