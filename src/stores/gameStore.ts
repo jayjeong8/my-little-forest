@@ -22,7 +22,15 @@ import {
 // 유틸리티 함수
 // ============================================================
 
-const generateId = (): string => crypto.randomUUID();
+const generateId = (): string => {
+  // crypto.randomUUID()가 없는 환경(SSR, 구형 브라우저)을 위한 폴백
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+
+  // 폴백: 타임스탬프 + 랜덤 문자열
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+};
 
 /** 두 타일 위치가 같은지 비교 */
 const positionEquals = (a: TilePosition, b: TilePosition): boolean =>
