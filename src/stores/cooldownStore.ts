@@ -3,6 +3,27 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { COOLDOWN_DURATIONS, STORAGE_KEYS } from "@/lib/constants";
 
+/** 오늘 날짜인지 확인 (자정 기준) */
+const isToday = (dateString: string): boolean => {
+  const date = new Date(dateString);
+  const today = new Date();
+
+  return (
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
+  );
+};
+
+/** 다음 자정까지 남은 시간 (밀리초) */
+const getTimeUntilMidnight = (): number => {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+
+  return midnight.getTime() - now.getTime();
+};
+
 interface CooldownState {
   cooldowns: Record<CooldownType, Cooldown | null>;
 }
@@ -57,6 +78,12 @@ export const useCooldownStore = create<CooldownStore>()(
         const cooldown = get().cooldowns[type];
         if (!cooldown) return false;
 
+        // 물주기: 자정 기준 리셋 (오늘 이미 사용했으면 쿨다운)
+        if (type === "water") {
+          return isToday(cooldown.lastUsedAt);
+        }
+
+        // 그 외: 시간 기반 쿨다운
         const elapsed = Date.now() - new Date(cooldown.lastUsedAt).getTime();
 
         return elapsed < cooldown.durationMs;
@@ -66,6 +93,14 @@ export const useCooldownStore = create<CooldownStore>()(
         const cooldown = get().cooldowns[type];
         if (!cooldown) return 0;
 
+        // 물주기: 자정까지 남은 시간
+        if (type === "water") {
+          if (!isToday(cooldown.lastUsedAt)) return 0;
+
+          return getTimeUntilMidnight();
+        }
+
+        // 그 외: 기존 로직
         const elapsed = Date.now() - new Date(cooldown.lastUsedAt).getTime();
         const remaining = cooldown.durationMs - elapsed;
 
