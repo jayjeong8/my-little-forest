@@ -1,4 +1,4 @@
-import type { SeedTier, CooldownType, TreeSpecies } from '@/types/game';
+import type { SeedTier, CooldownType, TreeSpecies } from "@/types/game";
 
 // 그리드 크기
 export const GRID_SIZE = 5;
@@ -43,59 +43,59 @@ export const COOLDOWN_DURATIONS: Record<CooldownType, number> = {
 
 // 티어별 나무 종류
 export const SPECIES_BY_TIER: Record<SeedTier, TreeSpecies[]> = {
-  common: ['willow', 'poplar', 'birch'],
-  uncommon: ['pine', 'cherry', 'apple'],
-  rare: ['olive', 'maple'],
-  epic: ['sequoia', 'baobab'],
-  legendary: ['dragon_blood', 'bristlecone'],
-  mythic: ['wollemi'],
+  common: ["willow", "poplar", "birch"],
+  uncommon: ["pine", "cherry", "apple"],
+  rare: ["olive", "maple"],
+  epic: ["sequoia", "baobab"],
+  legendary: ["dragon_blood", "bristlecone"],
+  mythic: ["wollemi"],
 };
 
 // 나무 종류별 한글 이름
 export const SPECIES_NAMES: Record<TreeSpecies, string> = {
-  willow: '버드나무',
-  poplar: '포플러',
-  birch: '자작나무',
-  pine: '소나무',
-  cherry: '벚나무',
-  apple: '사과나무',
-  olive: '올리브나무',
-  maple: '단풍나무',
-  sequoia: '세쿼이아',
-  baobab: '바오밥',
-  dragon_blood: '용혈수',
-  bristlecone: '브리슬콘 소나무',
-  wollemi: '월레미 소나무',
+  willow: "버드나무",
+  poplar: "포플러",
+  birch: "자작나무",
+  pine: "소나무",
+  cherry: "벚나무",
+  apple: "사과나무",
+  olive: "올리브나무",
+  maple: "단풍나무",
+  sequoia: "세쿼이아",
+  baobab: "바오밥",
+  dragon_blood: "용혈수",
+  bristlecone: "브리슬콘 소나무",
+  wollemi: "월레미 소나무",
 };
 
 // 티어 한글 이름
 export const TIER_NAMES: Record<SeedTier, string> = {
-  common: '일반',
-  uncommon: '고급',
-  rare: '희귀',
-  epic: '영웅',
-  legendary: '전설',
-  mythic: '신화',
+  common: "일반",
+  uncommon: "고급",
+  rare: "희귀",
+  epic: "영웅",
+  legendary: "전설",
+  mythic: "신화",
 };
 
 // 티어 색상 (Tailwind 클래스용)
 export const TIER_COLORS: Record<SeedTier, string> = {
-  common: 'text-gray-500',
-  uncommon: 'text-green-500',
-  rare: 'text-blue-500',
-  epic: 'text-purple-500',
-  legendary: 'text-orange-500',
-  mythic: 'text-red-500',
+  common: "text-gray-500",
+  uncommon: "text-green-500",
+  rare: "text-blue-500",
+  epic: "text-purple-500",
+  legendary: "text-orange-500",
+  mythic: "text-red-500",
 };
 
 // 티어 배경색
 export const TIER_BG_COLORS: Record<SeedTier, string> = {
-  common: 'bg-gray-100',
-  uncommon: 'bg-green-100',
-  rare: 'bg-blue-100',
-  epic: 'bg-purple-100',
-  legendary: 'bg-orange-100',
-  mythic: 'bg-red-100',
+  common: "bg-gray-100",
+  uncommon: "bg-green-100",
+  rare: "bg-blue-100",
+  epic: "bg-purple-100",
+  legendary: "bg-orange-100",
+  mythic: "bg-red-100",
 };
 
 // 게임 상태 버전 (마이그레이션용)
@@ -103,6 +103,6 @@ export const CURRENT_VERSION = 1;
 
 // 스토리지 키
 export const STORAGE_KEYS = {
-  game: 'my-little-forest-game',
-  cooldowns: 'my-little-forest-cooldowns',
+  game: "my-little-forest-game",
+  cooldowns: "my-little-forest-cooldowns",
 } as const;

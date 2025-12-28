@@ -1,6 +1,6 @@
-import type { StorageAdapter } from './types';
-import type { GameState } from '@/types/game';
-import { STORAGE_KEYS, CURRENT_VERSION } from '@/lib/constants';
+import type { StorageAdapter } from "./types";
+import type { GameState } from "@/types/game";
+import { STORAGE_KEYS, CURRENT_VERSION } from "@/lib/constants";
 
 /**
  * LocalStorage 기반 Storage Adapter 구현
@@ -16,7 +16,7 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
 
   async load(): Promise<GameState | null> {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
 
     try {
       const raw = localStorage.getItem(this.storageKey);
@@ -24,15 +24,17 @@ export class LocalStorageAdapter implements StorageAdapter {
 
       // Zustand persist 형식: { state: {...}, version: 0 }
       const parsed = JSON.parse(raw);
+
       return parsed.state as GameState;
     } catch (error) {
-      console.error('Failed to load game state:', error);
+      console.error("Failed to load game state:", error);
+
       return null;
     }
   }
 
   async save(state: GameState): Promise<void> {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     try {
       const toSave = {
@@ -44,18 +46,19 @@ export class LocalStorageAdapter implements StorageAdapter {
       };
       localStorage.setItem(this.storageKey, JSON.stringify(toSave));
     } catch (error) {
-      console.error('Failed to save game state:', error);
+      console.error("Failed to save game state:", error);
       throw error;
     }
   }
 
   async patch<K extends keyof GameState>(
     key: K,
-    value: GameState[K]
+    value: GameState[K],
   ): Promise<void> {
     const current = await this.load();
+
     if (!current) {
-      throw new Error('No game state to patch');
+      throw new Error("No game state to patch");
     }
 
     await this.save({
@@ -65,12 +68,13 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
 
   async clear(): Promise<void> {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     localStorage.removeItem(this.storageKey);
   }
 
   async getVersion(): Promise<number> {
     const state = await this.load();
+
     return state?.version ?? 0;
   }
 
@@ -104,9 +108,7 @@ export class LocalStorageAdapter implements StorageAdapter {
 /**
  * LocalStorage Adapter 팩토리 함수
  */
-export function createLocalStorageAdapter(
-  storageKey?: string
-): StorageAdapter {
+export function createLocalStorageAdapter(storageKey?: string): StorageAdapter {
   return new LocalStorageAdapter(storageKey);
 }
 
@@ -114,10 +116,11 @@ export function createLocalStorageAdapter(
  * 게임 상태 존재 여부 확인
  */
 export function hasExistingGameState(): boolean {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === "undefined") return false;
 
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.game);
+
     return raw !== null;
   } catch {
     return false;
@@ -132,7 +135,7 @@ export async function needsInitialization(): Promise<boolean> {
   const state = await adapter.load();
 
   // 상태가 없거나 튜토리얼이 시작되지 않은 경우
-  return !state || state.tutorial.currentStep === 'not_started';
+  return !state || state.tutorial.currentStep === "not_started";
 }
 
 /**
@@ -143,9 +146,6 @@ export async function checkAndMigrate(): Promise<void> {
   const currentVersion = await adapter.getVersion();
 
   if (currentVersion < CURRENT_VERSION) {
-    console.log(
-      `Migrating game state from v${currentVersion} to v${CURRENT_VERSION}`
-    );
     await adapter.migrate(currentVersion, CURRENT_VERSION);
   }
 }

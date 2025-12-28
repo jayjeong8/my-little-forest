@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import type { CooldownType, Cooldown } from '@/types/game';
-import { COOLDOWN_DURATIONS, STORAGE_KEYS } from '@/lib/constants';
+import type { CooldownType, Cooldown } from "@/types/game";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { COOLDOWN_DURATIONS, STORAGE_KEYS } from "@/lib/constants";
 
 interface CooldownState {
   cooldowns: Record<CooldownType, Cooldown | null>;
@@ -58,6 +58,7 @@ export const useCooldownStore = create<CooldownStore>()(
         if (!cooldown) return false;
 
         const elapsed = Date.now() - new Date(cooldown.lastUsedAt).getTime();
+
         return elapsed < cooldown.durationMs;
       },
 
@@ -97,13 +98,13 @@ export const useCooldownStore = create<CooldownStore>()(
     {
       name: STORAGE_KEYS.cooldowns,
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );
 
 // 남은 시간을 포맷팅하는 유틸리티 함수
 export function formatRemainingTime(ms: number): string {
-  if (ms <= 0) return '00:00';
+  if (ms <= 0) return "00:00";
 
   const totalSeconds = Math.ceil(ms / 1000);
   const hours = Math.floor(totalSeconds / 3600);
@@ -111,8 +112,8 @@ export function formatRemainingTime(ms: number): string {
   const seconds = totalSeconds % 60;
 
   if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   }
 
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }

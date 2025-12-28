@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { SeedCard } from './SeedCard';
-import { useSeeds } from '@/hooks/useSeeds';
+import { SeedCard } from "./SeedCard";
+import { useSeeds } from "@/hooks/useSeeds";
 
 export function SeedInventory() {
   const { seeds, totalSeeds } = useSeeds();
 
   if (totalSeeds === 0) {
     return (
-      <div className="p-4 bg-gray-50 rounded-xl">
-        <h3 className="font-bold mb-2">🌰 씨앗 보관함</h3>
-        <p className="text-gray-500 text-sm">
+      <div className="rounded-xl bg-gray-50 p-4">
+        <h3 className="mb-2 font-bold">🌰 씨앗 보관함</h3>
+        <p className="text-sm text-gray-500">
           씨앗이 없어요. 나무를 수확하거나 광고를 시청해서 씨앗을 얻으세요!
         </p>
       </div>
@@ -18,8 +18,8 @@ export function SeedInventory() {
   }
 
   return (
-    <div className="p-4 bg-gray-50 rounded-xl">
-      <div className="flex items-center justify-between mb-3">
+    <div className="rounded-xl bg-gray-50 p-4">
+      <div className="mb-3 flex items-center justify-between">
         <h3 className="font-bold">🌰 씨앗 보관함</h3>
         <span className="text-sm text-gray-500">{totalSeeds}개</span>
       </div>

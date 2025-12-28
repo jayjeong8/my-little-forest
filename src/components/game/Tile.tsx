@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Tree as TreeComponent } from './Tree';
-import type { Tree as TreeType, TilePosition } from '@/types/game';
+import type { Tree as TreeType, TilePosition } from "@/types/game";
+import { Tree as TreeComponent } from "./Tree";
 
 interface TileProps {
   position: TilePosition;
@@ -17,18 +17,11 @@ export function Tile({ position, tree, isSelected, onSelect }: TileProps) {
 
   return (
     <div
-      className={`
-        group
-        aspect-square
-        rounded-lg
-        transition-all duration-200
-        ${
-          tree
-            ? 'bg-green-100 hover:bg-green-200'
-            : 'bg-amber-100 hover:bg-amber-200 cursor-pointer'
-        }
-        ${isSelected ? 'ring-2 ring-blue-500' : ''}
-      `}
+      className={`group aspect-square rounded-lg transition-all duration-200 ${
+        tree
+          ? "bg-green-100 hover:bg-green-200"
+          : "cursor-pointer bg-amber-100 hover:bg-amber-200"
+      } ${isSelected ? "ring-2 ring-blue-500" : ""} `}
     >
       {tree ? (
         <TreeComponent
@@ -39,9 +32,9 @@ export function Tile({ position, tree, isSelected, onSelect }: TileProps) {
       ) : (
         <button
           onClick={handleClick}
-          className="w-full h-full flex items-center justify-center group"
+          className="group flex h-full w-full items-center justify-center"
         >
-          <span className="text-2xl opacity-30 group-hover:opacity-60 transition-opacity">
+          <span className="text-2xl opacity-30 transition-opacity group-hover:opacity-60">
             +
           </span>
         </button>

@@ -1,27 +1,28 @@
-'use client';
+"use client";
 
-import { useCooldown } from '@/hooks/useCooldowns';
-import type { CooldownType } from '@/types/game';
+import type { CooldownType } from "@/types/game";
+import { useCooldown } from "@/hooks/useCooldowns";
 
 interface CooldownTimerProps {
   type: CooldownType;
   className?: string;
 }
 
-export function CooldownTimer({ type, className = '' }: CooldownTimerProps) {
+export function CooldownTimer({ type, className = "" }: CooldownTimerProps) {
   const { isOnCooldown, remainingTimeFormatted } = useCooldown(type);
 
   if (!isOnCooldown) return null;
 
   return (
     <span
-      className={`
-        inline-flex items-center gap-1
-        text-sm font-mono text-gray-500
-        ${className}
-      `}
+      className={`inline-flex items-center gap-1 font-mono text-sm text-gray-500 ${className} `}
     >
-      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg
+        className="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
         <path
           strokeLinecap="round"
           strokeLinejoin="round"

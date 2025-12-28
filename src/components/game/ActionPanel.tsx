@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/Button';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { CooldownTimer } from '@/components/ui/CooldownTimer';
-import { useTrees } from '@/hooks/useTrees';
-import { useSeeds } from '@/hooks/useSeeds';
-import { useTutorial } from '@/hooks/useTutorial';
-import { useToast } from '@/components/ui/Toast';
-import { SPECIES_NAMES, TIER_NAMES } from '@/lib/constants';
-import type { Tree, TilePosition } from '@/types/game';
+import type { Tree, TilePosition } from "@/types/game";
+import { Button } from "@/components/ui/Button";
+import { CooldownTimer } from "@/components/ui/CooldownTimer";
+import { ProgressBar } from "@/components/ui/ProgressBar";
+import { useToast } from "@/components/ui/Toast";
+import { useSeeds } from "@/hooks/useSeeds";
+import { useTrees } from "@/hooks/useTrees";
+import { useTutorial } from "@/hooks/useTutorial";
+import { SPECIES_NAMES, TIER_NAMES } from "@/lib/constants";
 
 interface ActionPanelProps {
   selectedTile: {
@@ -27,7 +27,8 @@ export function ActionPanel({
   hasSeed,
 }: ActionPanelProps) {
   const { tree, position } = selectedTile;
-  const { waterTree, fertilizeTree, plantSeed, canWater, canFertilize } = useTrees();
+  const { waterTree, fertilizeTree, plantSeed, canWater, canFertilize } =
+    useTrees();
   const { seeds } = useSeeds();
   const { advanceTutorial, isStep } = useTutorial();
   const { showToast } = useToast();
@@ -37,15 +38,16 @@ export function ActionPanel({
     if (!tree) return;
 
     const success = waterTree(tree.id);
+
     if (success) {
-      showToast('💧 물을 주었어요!', 'success');
+      showToast("💧 물을 주었어요!", "success");
 
       // 튜토리얼 진행
-      if (isStep('water_tree')) {
+      if (isStep("water_tree")) {
         advanceTutorial();
       }
     } else {
-      showToast('물주기 쿨다운 중이에요', 'warning');
+      showToast("물주기 쿨다운 중이에요", "warning");
     }
   };
 
@@ -54,15 +56,16 @@ export function ActionPanel({
     if (!tree) return;
 
     const success = fertilizeTree(tree.id);
+
     if (success) {
-      showToast('🌿 비료를 주었어요!', 'success');
+      showToast("🌿 비료를 주었어요!", "success");
 
       // 튜토리얼 진행
-      if (isStep('fertilize_intro')) {
+      if (isStep("fertilize_intro")) {
         advanceTutorial();
       }
     } else {
-      showToast('비료 쿨다운 중이에요', 'warning');
+      showToast("비료 쿨다운 중이에요", "warning");
     }
   };
 
@@ -75,11 +78,14 @@ export function ActionPanel({
     const success = plantSeed(seedToPlant.id, position);
 
     if (success) {
-      showToast(`🌱 ${SPECIES_NAMES[seedToPlant.species]} 씨앗을 심었어요!`, 'success');
+      showToast(
+        `🌱 ${SPECIES_NAMES[seedToPlant.species]} 씨앗을 심었어요!`,
+        "success",
+      );
       onClose();
 
       // 튜토리얼 진행
-      if (isStep('plant_seed')) {
+      if (isStep("plant_seed")) {
         advanceTutorial();
       }
     }
@@ -87,17 +93,15 @@ export function ActionPanel({
 
   // 나무가 있는 경우
   if (tree) {
-    const isMature = tree.status === 'mature';
-    const canGrow = tree.status !== 'mature';
+    const isMature = tree.status === "mature";
+    const canGrow = tree.status !== "mature";
 
     return (
-      <div className="mt-4 p-4 bg-white rounded-xl shadow-lg">
+      <div className="mt-4 rounded-xl bg-white p-4 shadow-lg">
         {/* 나무 정보 */}
         <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-bold text-lg">
-              {SPECIES_NAMES[tree.species]}
-            </h3>
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-lg font-bold">{SPECIES_NAMES[tree.species]}</h3>
             <span className="text-sm text-gray-500">
               {TIER_NAMES[tree.tier]}
             </span>
@@ -105,7 +109,7 @@ export function ActionPanel({
           <ProgressBar
             current={tree.currentStep}
             max={tree.requiredSteps}
-            color={isMature ? 'green' : 'blue'}
+            color={isMature ? "green" : "blue"}
           />
         </div>
 
@@ -158,19 +162,13 @@ export function ActionPanel({
 
   // 빈 타일인 경우
   return (
-    <div className="mt-4 p-4 bg-white rounded-xl shadow-lg">
-      <h3 className="font-bold text-lg mb-4">빈 땅</h3>
+    <div className="mt-4 rounded-xl bg-white p-4 shadow-lg">
+      <h3 className="mb-4 text-lg font-bold">빈 땅</h3>
 
       {hasSeed ? (
         <div>
-          <p className="text-gray-600 mb-3">
-            씨앗을 심어 나무를 키워보세요!
-          </p>
-          <Button
-            variant="success"
-            className="w-full"
-            onClick={handlePlant}
-          >
+          <p className="mb-3 text-gray-600">씨앗을 심어 나무를 키워보세요!</p>
+          <Button variant="success" className="w-full" onClick={handlePlant}>
             🌱 씨앗 심기 ({seeds.length}개 보유)
           </Button>
         </div>

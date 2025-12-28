@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useCallback } from 'react';
-import { useCooldownStore, formatRemainingTime } from '@/stores/cooldownStore';
-import type { CooldownType } from '@/types/game';
+import type { CooldownType } from "@/types/game";
+import { useEffect, useState, useCallback } from "react";
+import { useCooldownStore, formatRemainingTime } from "@/stores/cooldownStore";
 
 interface CooldownInfo {
   isOnCooldown: boolean;
@@ -53,22 +53,22 @@ export function useCooldown(type: CooldownType): CooldownInfo {
 export function useCooldowns() {
   const store = useCooldownStore();
 
-  const water = useCooldown('water');
-  const fertilizer = useCooldown('fertilizer');
-  const seedAd = useCooldown('seed_ad');
+  const water = useCooldown("water");
+  const fertilizer = useCooldown("fertilizer");
+  const seedAd = useCooldown("seed_ad");
 
   const startCooldown = useCallback(
     (type: CooldownType) => {
       store.startCooldown(type);
     },
-    [store]
+    [store],
   );
 
   const resetCooldown = useCallback(
     (type: CooldownType) => {
       store.resetCooldown(type);
     },
-    [store]
+    [store],
   );
 
   return {

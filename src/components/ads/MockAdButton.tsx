@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/Button';
-import { CooldownTimer } from '@/components/ui/CooldownTimer';
-import { Modal } from '@/components/ui/Modal';
-import { useSeeds } from '@/hooks/useSeeds';
-import { useCooldown } from '@/hooks/useCooldowns';
-import { useToast } from '@/components/ui/Toast';
+import { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { CooldownTimer } from "@/components/ui/CooldownTimer";
+import { Modal } from "@/components/ui/Modal";
+import { useToast } from "@/components/ui/Toast";
+import { useCooldown } from "@/hooks/useCooldowns";
+import { useSeeds } from "@/hooks/useSeeds";
 
-type AdType = 'fertilizer' | 'seed';
+type AdType = "fertilizer" | "seed";
 
 interface MockAdButtonProps {
   type: AdType;
@@ -17,14 +17,14 @@ interface MockAdButtonProps {
 
 const AD_CONFIG = {
   fertilizer: {
-    label: '🌿 비료 받기',
-    reward: '비료 1개',
-    cooldownType: 'fertilizer' as const,
+    label: "🌿 비료 받기",
+    reward: "비료 1개",
+    cooldownType: "fertilizer" as const,
   },
   seed: {
-    label: '🌰 씨앗 받기',
-    reward: '씨앗 1개',
-    cooldownType: 'seed_ad' as const,
+    label: "🌰 씨앗 받기",
+    reward: "씨앗 1개",
+    cooldownType: "seed_ad" as const,
   },
 };
 
@@ -40,16 +40,17 @@ export function MockAdButton({ type, onRewardClaimed }: MockAdButtonProps) {
 
   // 버튼 비활성화 여부
   const isDisabled =
-    cooldown.isOnCooldown ||
-    (type === 'seed' && !canWatchSeedAd);
+    cooldown.isOnCooldown || (type === "seed" && !canWatchSeedAd);
 
   // 비활성화 사유 메시지
   const getDisabledReason = () => {
-    if (cooldown.isOnCooldown) return '쿨다운 중';
-    if (type === 'seed') {
-      if (seedAdDisabledReason === 'has_seeds') return '씨앗이 있어요';
-      if (seedAdDisabledReason === 'no_empty_tile') return '빈 땅이 없어요';
+    if (cooldown.isOnCooldown) return "쿨다운 중";
+
+    if (type === "seed") {
+      if (seedAdDisabledReason === "has_seeds") return "씨앗이 있어요";
+      if (seedAdDisabledReason === "no_empty_tile") return "빈 땅이 없어요";
     }
+
     return null;
   };
 
@@ -63,8 +64,10 @@ export function MockAdButton({ type, onRewardClaimed }: MockAdButtonProps) {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
+
           return 100;
         }
+
         return prev + 10;
       });
     }, 300);
@@ -76,14 +79,15 @@ export function MockAdButton({ type, onRewardClaimed }: MockAdButtonProps) {
       setProgress(0);
 
       // 보상 지급
-      if (type === 'seed') {
+      if (type === "seed") {
         const seed = claimSeedFromAd();
+
         if (seed) {
-          showToast('🌰 씨앗을 받았어요!', 'success');
+          showToast("🌰 씨앗을 받았어요!", "success");
         }
       } else {
         // 비료는 직접 나무에 적용하므로 여기서는 알림만
-        showToast('🌿 비료를 받았어요! 나무에 적용해주세요.', 'success');
+        showToast("🌿 비료를 받았어요! 나무에 적용해주세요.", "success");
       }
 
       onRewardClaimed?.();
@@ -96,17 +100,14 @@ export function MockAdButton({ type, onRewardClaimed }: MockAdButtonProps) {
     <>
       <div className="flex flex-col items-center gap-1">
         <Button
-          variant={type === 'seed' ? 'success' : 'secondary'}
+          variant={type === "seed" ? "success" : "secondary"}
           onClick={handleWatchAd}
           disabled={isDisabled}
           className="w-full"
         >
           {config.label}
           {cooldown.isOnCooldown && (
-            <CooldownTimer
-              type={config.cooldownType}
-              className="ml-2"
-            />
+            <CooldownTimer type={config.cooldownType} className="ml-2" />
           )}
         </Button>
         {disabledReason && (
@@ -120,16 +121,16 @@ export function MockAdButton({ type, onRewardClaimed }: MockAdButtonProps) {
         onClose={() => {}} // 닫기 불가
         showCloseButton={false}
       >
-        <div className="text-center py-6">
-          <p className="text-lg font-bold mb-4">📺 광고 시청 중...</p>
-          <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden mb-4">
+        <div className="py-6 text-center">
+          <p className="mb-4 text-lg font-bold">📺 광고 시청 중...</p>
+          <div className="mb-4 h-4 w-full overflow-hidden rounded-full bg-gray-200">
             <div
               className="h-full bg-blue-500 transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
           <p className="text-gray-600">
-            {progress < 100 ? '잠시만 기다려주세요...' : '보상 지급 중!'}
+            {progress < 100 ? "잠시만 기다려주세요..." : "보상 지급 중!"}
           </p>
         </div>
       </Modal>

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/Button';
-import { useTutorial, TUTORIAL_MESSAGES } from '@/hooks/useTutorial';
+import { Button } from "@/components/ui/Button";
+import { useTutorial, TUTORIAL_MESSAGES } from "@/hooks/useTutorial";
 
 export function TutorialOverlay() {
   const { currentStep, isActive, skipTutorial, progress } = useTutorial();
@@ -11,11 +11,11 @@ export function TutorialOverlay() {
   const message = TUTORIAL_MESSAGES[currentStep];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 p-4 pointer-events-none">
-      <div className="max-w-md mx-auto pointer-events-auto">
-        <div className="bg-blue-600 text-white rounded-xl shadow-lg p-4">
+    <div className="pointer-events-none fixed right-0 bottom-0 left-0 z-40 p-4">
+      <div className="pointer-events-auto mx-auto max-w-md">
+        <div className="rounded-xl bg-blue-600 p-4 text-white shadow-lg">
           {/* 진행률 바 */}
-          <div className="h-1 bg-blue-400 rounded-full mb-3 overflow-hidden">
+          <div className="mb-3 h-1 overflow-hidden rounded-full bg-blue-400">
             <div
               className="h-full bg-white transition-all duration-300"
               style={{ width: `${progress}%` }}
@@ -34,7 +34,7 @@ export function TutorialOverlay() {
           <div className="mt-3 flex justify-end">
             <button
               onClick={skipTutorial}
-              className="text-sm text-blue-200 hover:text-white transition-colors"
+              className="text-sm text-blue-200 transition-colors hover:text-white"
             >
               튜토리얼 건너뛰기 →
             </button>
@@ -53,11 +53,11 @@ export function TutorialStartScreen({ onStart }: TutorialStartScreenProps) {
   const { skipTutorial } = useTutorial();
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-green-100 to-green-200">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-        <div className="text-6xl mb-4">🌳</div>
-        <h1 className="text-2xl font-bold mb-2">나의 작은 숲</h1>
-        <p className="text-gray-600 mb-6">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-green-100 to-green-200 p-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-xl">
+        <div className="mb-4 text-6xl">🌳</div>
+        <h1 className="mb-2 text-2xl font-bold">나의 작은 숲</h1>
+        <p className="mb-6 text-gray-600">
           나무를 키우고, 수확하여 보상을 받으세요!
         </p>
 

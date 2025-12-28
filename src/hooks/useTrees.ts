@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useCallback, useMemo } from 'react';
-import { useGameStore } from '@/stores/gameStore';
-import { useCooldownStore } from '@/stores/cooldownStore';
-import type { Tree, TilePosition, TreeStatus } from '@/types/game';
+import type { Tree, TilePosition, TreeStatus } from "@/types/game";
+import { useCallback, useMemo } from "react";
+import { useCooldownStore } from "@/stores/cooldownStore";
+import { useGameStore } from "@/stores/gameStore";
 
 export function useTrees() {
   // Game Store
@@ -21,8 +21,8 @@ export function useTrees() {
   const getRemainingTime = useCooldownStore((state) => state.getRemainingTime);
 
   // 쿨다운 상태
-  const waterCooldown = isOnCooldown('water');
-  const fertilizerCooldown = isOnCooldown('fertilizer');
+  const waterCooldown = isOnCooldown("water");
+  const fertilizerCooldown = isOnCooldown("fertilizer");
 
   // 액션 가능 여부
   const canWater = !waterCooldown;
@@ -33,7 +33,7 @@ export function useTrees() {
     (seedId: string, position: TilePosition): boolean => {
       return plantSeedAction(seedId, position);
     },
-    [plantSeedAction]
+    [plantSeedAction],
   );
 
   // 물주기 (쿨다운 적용)
@@ -42,12 +42,14 @@ export function useTrees() {
       if (!canWater) return false;
 
       const success = waterTreeAction(treeId);
+
       if (success) {
-        startCooldown('water');
+        startCooldown("water");
       }
+
       return success;
     },
-    [canWater, waterTreeAction, startCooldown]
+    [canWater, waterTreeAction, startCooldown],
   );
 
   // 비료주기 (쿨다운 적용)
@@ -56,12 +58,14 @@ export function useTrees() {
       if (!canFertilize) return false;
 
       const success = fertilizeTreeAction(treeId);
+
       if (success) {
-        startCooldown('fertilizer');
+        startCooldown("fertilizer");
       }
+
       return success;
     },
-    [canFertilize, fertilizeTreeAction, startCooldown]
+    [canFertilize, fertilizeTreeAction, startCooldown],
   );
 
   // 수확
@@ -69,7 +73,7 @@ export function useTrees() {
     (treeId: string) => {
       return harvestTreeAction(treeId);
     },
-    [harvestTreeAction]
+    [harvestTreeAction],
   );
 
   // 상태별 나무 필터링
@@ -77,21 +81,24 @@ export function useTrees() {
     (status: TreeStatus): Tree[] => {
       return trees.filter((t) => t.status === status);
     },
-    [trees]
+    [trees],
   );
 
   // 파생 상태
   const harvestableCount = useMemo(
-    () => trees.filter((t) => t.status === 'mature').length,
-    [trees]
+    () => trees.filter((t) => t.status === "mature").length,
+    [trees],
   );
 
   const growingCount = useMemo(
     () =>
       trees.filter(
-        (t) => t.status === 'seed' || t.status === 'seedling' || t.status === 'growing'
+        (t) =>
+          t.status === "seed" ||
+          t.status === "seedling" ||
+          t.status === "growing",
       ).length,
-    [trees]
+    [trees],
   );
 
   return {
@@ -103,8 +110,8 @@ export function useTrees() {
     // 쿨다운 상태
     canWater,
     canFertilize,
-    waterRemainingTime: getRemainingTime('water'),
-    fertilizerRemainingTime: getRemainingTime('fertilizer'),
+    waterRemainingTime: getRemainingTime("water"),
+    fertilizerRemainingTime: getRemainingTime("fertilizer"),
 
     // 액션
     plantSeed,

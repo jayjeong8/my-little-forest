@@ -1,40 +1,40 @@
 // 씨앗 티어
 export type SeedTier =
-  | 'common'
-  | 'uncommon'
-  | 'rare'
-  | 'epic'
-  | 'legendary'
-  | 'mythic';
+  | "common"
+  | "uncommon"
+  | "rare"
+  | "epic"
+  | "legendary"
+  | "mythic";
 
 // 나무 종류
 export type TreeSpecies =
   // Common
-  | 'willow'
-  | 'poplar'
-  | 'birch'
+  | "willow"
+  | "poplar"
+  | "birch"
   // Uncommon
-  | 'pine'
-  | 'cherry'
-  | 'apple'
+  | "pine"
+  | "cherry"
+  | "apple"
   // Rare
-  | 'olive'
-  | 'maple'
+  | "olive"
+  | "maple"
   // Epic
-  | 'sequoia'
-  | 'baobab'
+  | "sequoia"
+  | "baobab"
   // Legendary
-  | 'dragon_blood'
-  | 'bristlecone'
+  | "dragon_blood"
+  | "bristlecone"
   // Mythic
-  | 'wollemi';
+  | "wollemi";
 
 // 나무 상태
 export type TreeStatus =
-  | 'seed' // 씨앗 (방금 심음, 0 step)
-  | 'seedling' // 새싹 (1+ step)
-  | 'growing' // 성장 중
-  | 'mature'; // 수확 가능
+  | "seed" // 씨앗 (방금 심음, 0 step)
+  | "seedling" // 새싹 (1+ step)
+  | "growing" // 성장 중
+  | "mature"; // 수확 가능
 
 // 나무
 export interface Tree {
@@ -58,14 +58,14 @@ export interface Seed {
   tier: SeedTier;
   species: TreeSpecies;
   obtainedAt: string; // ISO timestamp
-  source: 'harvest' | 'ad' | 'tutorial';
+  source: "harvest" | "ad" | "tutorial";
 }
 
 // 쿨다운 타입
 export type CooldownType =
-  | 'water' // 물주기: 일일 1회
-  | 'fertilizer' // 비료: 20분
-  | 'seed_ad'; // 씨앗 광고: 3시간
+  | "water" // 물주기: 일일 1회
+  | "fertilizer" // 비료: 20분
+  | "seed_ad"; // 씨앗 광고: 3시간
 
 // 쿨다운 상태
 export interface Cooldown {
@@ -76,12 +76,12 @@ export interface Cooldown {
 
 // 튜토리얼 단계
 export type TutorialStep =
-  | 'not_started'
-  | 'water_tree'
-  | 'harvest_tree'
-  | 'plant_seed'
-  | 'fertilize_intro'
-  | 'completed';
+  | "not_started"
+  | "water_tree"
+  | "harvest_tree"
+  | "plant_seed"
+  | "fertilize_intro"
+  | "completed";
 
 // 튜토리얼 상태
 export interface TutorialState {

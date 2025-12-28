@@ -1,27 +1,28 @@
-'use client';
+"use client";
 
-import { useCallback, useMemo } from 'react';
-import { useGameStore } from '@/stores/gameStore';
-import type { TutorialStep } from '@/types/game';
+import type { TutorialStep } from "@/types/game";
+import { useCallback, useMemo } from "react";
+import { useGameStore } from "@/stores/gameStore";
 
 // 튜토리얼 단계별 안내 메시지
 export const TUTORIAL_MESSAGES: Record<TutorialStep, string> = {
-  not_started: '',
-  water_tree: '새싹에게 물을 주세요! 나무를 탭하고 물주기 버튼을 누르세요.',
-  harvest_tree: '나무가 다 자랐어요! 수확 버튼을 눌러 보상을 받으세요.',
-  plant_seed: '씨앗을 받았어요! 빈 땅을 탭해서 씨앗을 심어보세요.',
-  fertilize_intro: '비료를 주면 나무가 더 빨리 자라요. 광고를 시청하고 비료를 받아보세요.',
-  completed: '',
+  not_started: "",
+  water_tree: "새싹에게 물을 주세요! 나무를 탭하고 물주기 버튼을 누르세요.",
+  harvest_tree: "나무가 다 자랐어요! 수확 버튼을 눌러 보상을 받으세요.",
+  plant_seed: "씨앗을 받았어요! 빈 땅을 탭해서 씨앗을 심어보세요.",
+  fertilize_intro:
+    "비료를 주면 나무가 더 빨리 자라요. 광고를 시청하고 비료를 받아보세요.",
+  completed: "",
 };
 
 // 튜토리얼 단계 순서
 const STEP_ORDER: TutorialStep[] = [
-  'not_started',
-  'water_tree',
-  'harvest_tree',
-  'plant_seed',
-  'fertilize_intro',
-  'completed',
+  "not_started",
+  "water_tree",
+  "harvest_tree",
+  "plant_seed",
+  "fertilize_intro",
+  "completed",
 ];
 
 export function useTutorial() {
@@ -34,13 +35,13 @@ export function useTutorial() {
   const currentStep = tutorial.currentStep;
 
   // 완료 여부
-  const isCompleted = currentStep === 'completed';
+  const isCompleted = currentStep === "completed";
 
   // 진행 중 여부
-  const isActive = currentStep !== 'not_started' && currentStep !== 'completed';
+  const isActive = currentStep !== "not_started" && currentStep !== "completed";
 
   // 시작 전 여부
-  const isNotStarted = currentStep === 'not_started';
+  const isNotStarted = currentStep === "not_started";
 
   // 현재 메시지
   const currentMessage = TUTORIAL_MESSAGES[currentStep];
@@ -49,6 +50,7 @@ export function useTutorial() {
   const progress = useMemo(() => {
     const currentIndex = STEP_ORDER.indexOf(currentStep);
     const totalSteps = STEP_ORDER.length - 1; // not_started 제외
+
     return Math.round((currentIndex / totalSteps) * 100);
   }, [currentStep]);
 
@@ -62,12 +64,12 @@ export function useTutorial() {
     (step: TutorialStep) => {
       setTutorialStep(step);
     },
-    [setTutorialStep]
+    [setTutorialStep],
   );
 
   // 튜토리얼 건너뛰기
   const skipTutorial = useCallback(() => {
-    setTutorialStep('completed');
+    setTutorialStep("completed");
   }, [setTutorialStep]);
 
   // 특정 단계인지 확인
@@ -75,7 +77,7 @@ export function useTutorial() {
     (step: TutorialStep) => {
       return currentStep === step;
     },
-    [currentStep]
+    [currentStep],
   );
 
   return {

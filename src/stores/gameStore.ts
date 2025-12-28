@@ -1,5 +1,3 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import type {
   Tree,
   Seed,
@@ -8,14 +6,16 @@ import type {
   TilePosition,
   SeedTier,
   TreeSpecies,
-} from '@/types/game';
+} from "@/types/game";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import {
   TIER_STEPS,
   TIER_WEIGHTS,
   TIER_BASE_REWARDS,
   SPECIES_BY_TIER,
   STORAGE_KEYS,
-} from '@/lib/constants';
+} from "@/lib/constants";
 
 // 랜덤 ID 생성
 const generateId = () => crypto.randomUUID();
@@ -23,15 +23,17 @@ const generateId = () => crypto.randomUUID();
 // 랜덤 나무 종류 선택
 const getRandomSpecies = (tier: SeedTier): TreeSpecies => {
   const species = SPECIES_BY_TIER[tier];
+
   return species[Math.floor(Math.random() * species.length)];
 };
 
 // 나무 상태 계산
 const calculateTreeStatus = (currentStep: number, requiredSteps: number) => {
-  if (currentStep === 0) return 'seed' as const;
-  if (currentStep >= requiredSteps) return 'mature' as const;
-  if (currentStep === 1) return 'seedling' as const;
-  return 'growing' as const;
+  if (currentStep === 0) return "seed" as const;
+  if (currentStep >= requiredSteps) return "mature" as const;
+  if (currentStep === 1) return "seedling" as const;
+
+  return "growing" as const;
 };
 
 interface GameActions {
@@ -42,7 +44,7 @@ interface GameActions {
   harvestTree: (treeId: string) => { reward: number; seed: Seed } | null;
 
   // 씨앗 관련
-  addSeed: (tier: SeedTier, source: Seed['source']) => Seed;
+  addSeed: (tier: SeedTier, source: Seed["source"]) => Seed;
   removeSeed: (seedId: string) => void;
 
   // 포인트
@@ -67,7 +69,7 @@ const createInitialState = (): GameState => ({
   seeds: [],
   totalPoints: 0,
   tutorial: {
-    currentStep: 'not_started',
+    currentStep: "not_started",
     completedAt: null,
   },
   stats: {
@@ -95,7 +97,7 @@ export const useGameStore = create<GameStore>()(
         // 이미 나무가 있는지 확인
         const isOccupied = trees.some(
           (t) =>
-            t.tilePosition.x === position.x && t.tilePosition.y === position.y
+            t.tilePosition.x === position.x && t.tilePosition.y === position.y,
         );
         if (isOccupied) return false;
 
@@ -105,7 +107,7 @@ export const useGameStore = create<GameStore>()(
           species: seed.species,
           currentStep: 0,
           requiredSteps: TIER_STEPS[seed.tier],
-          status: 'seed',
+          status: "seed",
           tilePosition: position,
           plantedAt: new Date().toISOString(),
           lastWateredAt: null,
@@ -124,7 +126,7 @@ export const useGameStore = create<GameStore>()(
         const { trees } = get();
         const tree = trees.find((t) => t.id === treeId);
 
-        if (!tree || tree.status === 'mature') return false;
+        if (!tree || tree.status === "mature") return false;
 
         const newStep = tree.currentStep + 1;
         const newStatus = calculateTreeStatus(newStep, tree.requiredSteps);
@@ -138,7 +140,7 @@ export const useGameStore = create<GameStore>()(
                   status: newStatus,
                   lastWateredAt: new Date().toISOString(),
                 }
-              : t
+              : t,
           ),
           lastSavedAt: new Date().toISOString(),
         });
@@ -152,10 +154,10 @@ export const useGameStore = create<GameStore>()(
       },
 
       harvestTree: (treeId) => {
-        const { trees, stats } = get();
+        const { trees } = get();
         const tree = trees.find((t) => t.id === treeId);
 
-        if (!tree || tree.status !== 'mature') return null;
+        if (!tree || tree.status !== "mature") return null;
 
         // 리워드 계산 (기본 리워드 * 랜덤 보너스)
         const baseReward = TIER_BASE_REWARDS[tree.tier];
@@ -165,10 +167,10 @@ export const useGameStore = create<GameStore>()(
         // 수확 시 Common 씨앗 확정 지급
         const newSeed: Seed = {
           id: generateId(),
-          tier: 'common',
-          species: getRandomSpecies('common'),
+          tier: "common",
+          species: getRandomSpecies("common"),
           obtainedAt: new Date().toISOString(),
-          source: 'harvest',
+          source: "harvest",
         };
 
         const tierWeight = TIER_WEIGHTS[tree.tier];
@@ -227,11 +229,11 @@ export const useGameStore = create<GameStore>()(
         // 튜토리얼용 새싹 상태 나무 생성 (중앙에 배치)
         const tutorialTree: Tree = {
           id: generateId(),
-          tier: 'common',
-          species: 'willow',
+          tier: "common",
+          species: "willow",
           currentStep: 1, // 새싹 상태 (1/2)
           requiredSteps: 2,
-          status: 'seedling',
+          status: "seedling",
           tilePosition: { x: 2, y: 2 }, // 5x5 그리드 중앙
           plantedAt: new Date().toISOString(),
           lastWateredAt: null,
@@ -241,7 +243,7 @@ export const useGameStore = create<GameStore>()(
           ...createInitialState(),
           trees: [tutorialTree],
           tutorial: {
-            currentStep: 'water_tree',
+            currentStep: "water_tree",
             completedAt: null,
           },
         });
@@ -249,36 +251,39 @@ export const useGameStore = create<GameStore>()(
 
       advanceTutorial: () => {
         const stepOrder: TutorialStep[] = [
-          'not_started',
-          'water_tree',
-          'harvest_tree',
-          'plant_seed',
-          'fertilize_intro',
-          'completed',
+          "not_started",
+          "water_tree",
+          "harvest_tree",
+          "plant_seed",
+          "fertilize_intro",
+          "completed",
         ];
 
         set((state) => {
           const currentIndex = stepOrder.indexOf(state.tutorial.currentStep);
+
           if (currentIndex < stepOrder.length - 1) {
             const nextStep = stepOrder[currentIndex + 1];
+
             return {
               tutorial: {
                 currentStep: nextStep,
                 completedAt:
-                  nextStep === 'completed' ? new Date().toISOString() : null,
+                  nextStep === "completed" ? new Date().toISOString() : null,
               },
               lastSavedAt: new Date().toISOString(),
             };
           }
+
           return state;
         });
       },
 
       setTutorialStep: (step) => {
-        set((state) => ({
+        set(() => ({
           tutorial: {
             currentStep: step,
-            completedAt: step === 'completed' ? new Date().toISOString() : null,
+            completedAt: step === "completed" ? new Date().toISOString() : null,
           },
           lastSavedAt: new Date().toISOString(),
         }));
@@ -288,14 +293,14 @@ export const useGameStore = create<GameStore>()(
       getTreeAt: (position) => {
         return get().trees.find(
           (t) =>
-            t.tilePosition.x === position.x && t.tilePosition.y === position.y
+            t.tilePosition.x === position.x && t.tilePosition.y === position.y,
         );
       },
 
       isPositionOccupied: (position) => {
         return get().trees.some(
           (t) =>
-            t.tilePosition.x === position.x && t.tilePosition.y === position.y
+            t.tilePosition.x === position.x && t.tilePosition.y === position.y,
         );
       },
 
@@ -318,6 +323,6 @@ export const useGameStore = create<GameStore>()(
         createdAt: state.createdAt,
         lastSavedAt: state.lastSavedAt,
       }),
-    }
-  )
+    },
+  ),
 );

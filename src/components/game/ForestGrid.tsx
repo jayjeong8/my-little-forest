@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import { Tile } from './Tile';
-import { ActionPanel } from './ActionPanel';
-import { useTrees } from '@/hooks/useTrees';
-import { useSeeds } from '@/hooks/useSeeds';
-import { useTutorial } from '@/hooks/useTutorial';
-import { useToast } from '@/components/ui/Toast';
-import { GRID_SIZE } from '@/lib/constants';
-import type { Tree, TilePosition } from '@/types/game';
+import type { Tree, TilePosition } from "@/types/game";
+import { useState, useCallback } from "react";
+import { ActionPanel } from "./ActionPanel";
+import { Tile } from "./Tile";
+import { useToast } from "@/components/ui/Toast";
+import { useSeeds } from "@/hooks/useSeeds";
+import { useTrees } from "@/hooks/useTrees";
+import { useTutorial } from "@/hooks/useTutorial";
+import { GRID_SIZE } from "@/lib/constants";
 
 interface SelectedTile {
   position: TilePosition;
@@ -17,9 +17,9 @@ interface SelectedTile {
 
 export function ForestGrid() {
   const [selectedTile, setSelectedTile] = useState<SelectedTile | null>(null);
-  const { trees, getTreeAt, harvestTree } = useTrees();
+  const { getTreeAt, harvestTree } = useTrees();
   const { seeds } = useSeeds();
-  const { currentStep, advanceTutorial, isStep } = useTutorial();
+  const { advanceTutorial, isStep } = useTutorial();
   const { showToast } = useToast();
 
   // 타일 선택 핸들러
@@ -31,12 +31,13 @@ export function ForestGrid() {
         selectedTile?.position.y === position.y
       ) {
         setSelectedTile(null);
+
         return;
       }
 
       setSelectedTile({ position, tree });
     },
-    [selectedTile]
+    [selectedTile],
   );
 
   // 선택 해제
@@ -48,29 +49,33 @@ export function ForestGrid() {
   const handleHarvest = useCallback(
     (treeId: string) => {
       const result = harvestTree(treeId);
+
       if (result) {
-        showToast(`🎉 ${result.reward} 포인트 획득! 씨앗도 받았어요!`, 'success');
+        showToast(
+          `🎉 ${result.reward} 포인트 획득! 씨앗도 받았어요!`,
+          "success",
+        );
         clearSelection();
 
         // 튜토리얼 진행
-        if (isStep('harvest_tree')) {
+        if (isStep("harvest_tree")) {
           advanceTutorial();
         }
       }
     },
-    [harvestTree, showToast, clearSelection, isStep, advanceTutorial]
+    [harvestTree, showToast, clearSelection, isStep, advanceTutorial],
   );
 
   // 5x5 그리드 생성
   const gridPositions = Array.from({ length: GRID_SIZE }, (_, y) =>
-    Array.from({ length: GRID_SIZE }, (_, x) => ({ x, y }))
+    Array.from({ length: GRID_SIZE }, (_, x) => ({ x, y })),
   ).flat();
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="mx-auto w-full max-w-md">
       {/* 그리드 */}
       <div
-        className="grid gap-2 p-4 bg-green-50 rounded-xl"
+        className="grid gap-2 rounded-xl bg-green-50 p-4"
         style={{
           gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
         }}

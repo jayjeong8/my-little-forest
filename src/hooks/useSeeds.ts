@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useCallback, useMemo } from 'react';
-import { useGameStore } from '@/stores/gameStore';
-import { useCooldownStore } from '@/stores/cooldownStore';
-import type { Seed, SeedTier } from '@/types/game';
-import { GRID_SIZE } from '@/lib/constants';
+import type { Seed, SeedTier } from "@/types/game";
+import { useCallback, useMemo } from "react";
+import { GRID_SIZE } from "@/lib/constants";
+import { useCooldownStore } from "@/stores/cooldownStore";
+import { useGameStore } from "@/stores/gameStore";
 
 export function useSeeds() {
   // Game Store
@@ -21,20 +21,22 @@ export function useSeeds() {
   // 빈 타일 존재 여부
   const hasEmptyTile = useMemo(() => {
     const totalTiles = GRID_SIZE * GRID_SIZE;
+
     return trees.length < totalTiles;
   }, [trees]);
 
   // 씨앗 광고 시청 가능 여부
   // 조건: 쿨다운 아님 AND 보유 씨앗 0개 AND 빈 타일 존재
   const canWatchSeedAd = useMemo(() => {
-    return !isOnCooldown('seed_ad') && seeds.length === 0 && hasEmptyTile;
+    return !isOnCooldown("seed_ad") && seeds.length === 0 && hasEmptyTile;
   }, [isOnCooldown, seeds.length, hasEmptyTile]);
 
   // 씨앗 광고 불가 사유
   const seedAdDisabledReason = useMemo(() => {
-    if (isOnCooldown('seed_ad')) return 'cooldown';
-    if (seeds.length > 0) return 'has_seeds';
-    if (!hasEmptyTile) return 'no_empty_tile';
+    if (isOnCooldown("seed_ad")) return "cooldown";
+    if (seeds.length > 0) return "has_seeds";
+    if (!hasEmptyTile) return "no_empty_tile";
+
     return null;
   }, [isOnCooldown, seeds.length, hasEmptyTile]);
 
@@ -42,8 +44,9 @@ export function useSeeds() {
   const claimSeedFromAd = useCallback((): Seed | null => {
     if (!canWatchSeedAd) return null;
 
-    const seed = addSeedAction('common', 'ad');
-    startCooldown('seed_ad');
+    const seed = addSeedAction("common", "ad");
+    startCooldown("seed_ad");
+
     return seed;
   }, [canWatchSeedAd, addSeedAction, startCooldown]);
 
@@ -52,9 +55,10 @@ export function useSeeds() {
     return seeds.reduce(
       (acc, seed) => {
         acc[seed.tier] = (acc[seed.tier] || 0) + 1;
+
         return acc;
       },
-      {} as Partial<Record<SeedTier, number>>
+      {} as Partial<Record<SeedTier, number>>,
     );
   }, [seeds]);
 
@@ -63,7 +67,7 @@ export function useSeeds() {
     (tier: SeedTier): Seed[] => {
       return seeds.filter((s) => s.tier === tier);
     },
-    [seeds]
+    [seeds],
   );
 
   return {
@@ -76,7 +80,7 @@ export function useSeeds() {
     // 광고 관련
     canWatchSeedAd,
     seedAdDisabledReason,
-    seedAdRemainingTime: getRemainingTime('seed_ad'),
+    seedAdRemainingTime: getRemainingTime("seed_ad"),
     claimSeedFromAd,
 
     // 액션

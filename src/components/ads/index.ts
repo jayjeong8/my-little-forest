@@ -1,1 +1,1 @@
-export { MockAdButton } from './MockAdButton';
+export { MockAdButton } from "./MockAdButton";
