@@ -71,23 +71,16 @@ export function useSeeds() {
   );
 
   return {
-    // 데이터
     seeds,
     totalSeeds: seeds.length,
     seedsByTier,
     hasEmptyTile,
-
-    // 광고 관련
     canWatchSeedAd,
     seedAdDisabledReason,
     seedAdRemainingTime: getRemainingTime("seed_ad"),
     claimSeedFromAd,
-
-    // 액션
     addSeed: addSeedAction,
     removeSeed,
-
-    // 유틸리티
     getSeedsByTier,
   };
 }

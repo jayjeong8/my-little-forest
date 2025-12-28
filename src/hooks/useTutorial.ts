@@ -81,7 +81,6 @@ export function useTutorial() {
   );
 
   return {
-    // 상태
     currentStep,
     isCompleted,
     isActive,
@@ -89,14 +88,10 @@ export function useTutorial() {
     currentMessage,
     progress,
     completedAt: tutorial.completedAt,
-
-    // 액션
     startTutorial,
     advanceTutorial,
     goToStep,
     skipTutorial,
-
-    // 유틸리티
     isStep,
   };
 }

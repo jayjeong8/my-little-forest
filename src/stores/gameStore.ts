@@ -6,6 +6,7 @@ import type {
   TilePosition,
   SeedTier,
   TreeSpecies,
+  TreeStatus,
 } from "@/types/game";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
@@ -17,33 +18,53 @@ import {
   STORAGE_KEYS,
 } from "@/lib/constants";
 
-// 랜덤 ID 생성
-const generateId = () => crypto.randomUUID();
+// ============================================================
+// 유틸리티 함수
+// ============================================================
 
-// 랜덤 나무 종류 선택
+const generateId = (): string => crypto.randomUUID();
+
+/** 두 타일 위치가 같은지 비교 */
+const positionEquals = (a: TilePosition, b: TilePosition): boolean =>
+  a.x === b.x && a.y === b.y;
+
+/** 티어에 맞는 랜덤 나무 종류 선택 */
 const getRandomSpecies = (tier: SeedTier): TreeSpecies => {
   const species = SPECIES_BY_TIER[tier];
 
   return species[Math.floor(Math.random() * species.length)];
 };
 
-// 나무 상태 계산
-const calculateTreeStatus = (currentStep: number, requiredSteps: number) => {
-  if (currentStep === 0) return "seed" as const;
-  if (currentStep >= requiredSteps) return "mature" as const;
-  if (currentStep === 1) return "seedling" as const;
+/** 현재 스텝에 따른 나무 상태 계산 */
+const calculateTreeStatus = (
+  currentStep: number,
+  requiredSteps: number,
+): TreeStatus => {
+  if (currentStep === 0) return "seed";
+  if (currentStep === 1) return "seedling";
+  if (currentStep >= requiredSteps) return "mature";
 
-  return "growing" as const;
+  return "growing";
 };
 
+// ============================================================
+// 타입 정의
+// ============================================================
+
+/** 수확 결과 */
+export interface HarvestResult {
+  reward: number;
+  seed: Seed;
+}
+
 interface GameActions {
-  // 나무 관련
+  // 나무
   plantSeed: (seedId: string, position: TilePosition) => boolean;
   waterTree: (treeId: string) => boolean;
   fertilizeTree: (treeId: string) => boolean;
-  harvestTree: (treeId: string) => { reward: number; seed: Seed } | null;
+  harvestTree: (treeId: string) => HarvestResult | null;
 
-  // 씨앗 관련
+  // 씨앗
   addSeed: (tier: SeedTier, source: Seed["source"]) => Seed;
   removeSeed: (seedId: string) => void;
 
@@ -55,9 +76,11 @@ interface GameActions {
   advanceTutorial: () => void;
   setTutorialStep: (step: TutorialStep) => void;
 
-  // 유틸리티
+  // 조회
   getTreeAt: (position: TilePosition) => Tree | undefined;
   isPositionOccupied: (position: TilePosition) => boolean;
+
+  // 초기화
   resetGame: () => void;
 }
 
@@ -87,7 +110,6 @@ export const useGameStore = create<GameStore>()(
     (set, get) => ({
       ...createInitialState(),
 
-      // === 나무 액션 ===
       plantSeed: (seedId, position) => {
         const { seeds, trees } = get();
         const seed = seeds.find((s) => s.id === seedId);
@@ -95,9 +117,8 @@ export const useGameStore = create<GameStore>()(
         if (!seed) return false;
 
         // 이미 나무가 있는지 확인
-        const isOccupied = trees.some(
-          (t) =>
-            t.tilePosition.x === position.x && t.tilePosition.y === position.y,
+        const isOccupied = trees.some((t) =>
+          positionEquals(t.tilePosition, position),
         );
         if (isOccupied) return false;
 
@@ -191,7 +212,6 @@ export const useGameStore = create<GameStore>()(
         return { reward, seed: newSeed };
       },
 
-      // === 씨앗 액션 ===
       addSeed: (tier, source) => {
         const newSeed: Seed = {
           id: generateId(),
@@ -216,7 +236,6 @@ export const useGameStore = create<GameStore>()(
         }));
       },
 
-      // === 포인트 액션 ===
       addPoints: (amount) => {
         set((state) => ({
           totalPoints: state.totalPoints + amount,
@@ -224,7 +243,6 @@ export const useGameStore = create<GameStore>()(
         }));
       },
 
-      // === 튜토리얼 액션 ===
       initializeTutorial: () => {
         // 튜토리얼용 새싹 상태 나무 생성 (중앙에 배치)
         const tutorialTree: Tree = {
@@ -289,20 +307,11 @@ export const useGameStore = create<GameStore>()(
         }));
       },
 
-      // === 유틸리티 ===
-      getTreeAt: (position) => {
-        return get().trees.find(
-          (t) =>
-            t.tilePosition.x === position.x && t.tilePosition.y === position.y,
-        );
-      },
+      getTreeAt: (position) =>
+        get().trees.find((t) => positionEquals(t.tilePosition, position)),
 
-      isPositionOccupied: (position) => {
-        return get().trees.some(
-          (t) =>
-            t.tilePosition.x === position.x && t.tilePosition.y === position.y,
-        );
-      },
+      isPositionOccupied: (position) =>
+        get().trees.some((t) => positionEquals(t.tilePosition, position)),
 
       resetGame: () => {
         set({

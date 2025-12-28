@@ -102,24 +102,17 @@ export function useTrees() {
   );
 
   return {
-    // 데이터
     trees,
     harvestableCount,
     growingCount,
-
-    // 쿨다운 상태
     canWater,
     canFertilize,
     waterRemainingTime: getRemainingTime("water"),
     fertilizerRemainingTime: getRemainingTime("fertilizer"),
-
-    // 액션
     plantSeed,
     waterTree,
     fertilizeTree,
     harvestTree,
-
-    // 유틸리티
     getTreeAt,
     getTreesByStatus,
     isPositionOccupied,

@@ -17,28 +17,41 @@ export function useCooldown(type: CooldownType): CooldownInfo {
   const isOnCooldownFn = useCooldownStore((state) => state.isOnCooldown);
   const getRemainingTime = useCooldownStore((state) => state.getRemainingTime);
 
-  const [info, setInfo] = useState<CooldownInfo>(() => ({
-    isOnCooldown: isOnCooldownFn(type),
-    remainingTime: getRemainingTime(type),
-    remainingTimeFormatted: formatRemainingTime(getRemainingTime(type)),
-  }));
+  const [info, setInfo] = useState<CooldownInfo>(() => {
+    const remaining = getRemainingTime(type);
+
+    return {
+      isOnCooldown: isOnCooldownFn(type),
+      remainingTime: remaining,
+      remainingTimeFormatted: formatRemainingTime(remaining),
+    };
+  });
 
   useEffect(() => {
     const updateInfo = () => {
       const remaining = getRemainingTime(type);
+      const onCooldown = isOnCooldownFn(type);
       setInfo({
-        isOnCooldown: isOnCooldownFn(type),
+        isOnCooldown: onCooldown,
         remainingTime: remaining,
         remainingTimeFormatted: formatRemainingTime(remaining),
       });
+
+      return onCooldown;
     };
 
     // 초기 업데이트
-    updateInfo();
+    const isActive = updateInfo();
 
-    // 1초마다 업데이트 (쿨다운 중일 때만)
+    // 쿨다운 중일 때만 1초마다 업데이트
+    if (!isActive) return;
+
     const interval = setInterval(() => {
-      updateInfo();
+      const stillActive = updateInfo();
+
+      if (!stillActive) {
+        clearInterval(interval);
+      }
     }, 1000);
 
     return () => clearInterval(interval);

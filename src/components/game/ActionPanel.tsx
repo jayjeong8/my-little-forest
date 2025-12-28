@@ -10,6 +10,17 @@ import { useTrees } from "@/hooks/useTrees";
 import { useTutorial } from "@/hooks/useTutorial";
 import { SPECIES_NAMES, TIER_NAMES } from "@/lib/constants";
 
+function CloseButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="mt-3 w-full py-2 text-sm text-gray-500 hover:text-gray-700"
+    >
+      닫기
+    </button>
+  );
+}
+
 interface ActionPanelProps {
   selectedTile: {
     position: TilePosition;
@@ -91,14 +102,11 @@ export function ActionPanel({
     }
   };
 
-  // 나무가 있는 경우
   if (tree) {
     const isMature = tree.status === "mature";
-    const canGrow = tree.status !== "mature";
 
     return (
       <div className="mt-4 rounded-xl bg-white p-4 shadow-lg">
-        {/* 나무 정보 */}
         <div className="mb-4">
           <div className="mb-2 flex items-center justify-between">
             <h3 className="text-lg font-bold">{SPECIES_NAMES[tree.species]}</h3>
@@ -113,7 +121,6 @@ export function ActionPanel({
           />
         </div>
 
-        {/* 액션 버튼 */}
         <div className="flex gap-2">
           {isMature ? (
             <Button
@@ -129,7 +136,7 @@ export function ActionPanel({
                 variant="primary"
                 className="flex-1"
                 onClick={handleWater}
-                disabled={!canWater || !canGrow}
+                disabled={!canWater}
               >
                 💧 물주기
                 {!canWater && <CooldownTimer type="water" className="ml-2" />}
@@ -138,7 +145,7 @@ export function ActionPanel({
                 variant="secondary"
                 className="flex-1"
                 onClick={handleFertilize}
-                disabled={!canFertilize || !canGrow}
+                disabled={!canFertilize}
               >
                 🌿 비료
                 {!canFertilize && (
@@ -149,18 +156,11 @@ export function ActionPanel({
           )}
         </div>
 
-        {/* 닫기 버튼 */}
-        <button
-          onClick={onClose}
-          className="mt-3 w-full py-2 text-sm text-gray-500 hover:text-gray-700"
-        >
-          닫기
-        </button>
+        <CloseButton onClick={onClose} />
       </div>
     );
   }
 
-  // 빈 타일인 경우
   return (
     <div className="mt-4 rounded-xl bg-white p-4 shadow-lg">
       <h3 className="mb-4 text-lg font-bold">빈 땅</h3>
@@ -178,12 +178,7 @@ export function ActionPanel({
         </p>
       )}
 
-      <button
-        onClick={onClose}
-        className="mt-3 w-full py-2 text-sm text-gray-500 hover:text-gray-700"
-      >
-        닫기
-      </button>
+      <CloseButton onClick={onClose} />
     </div>
   );
 }
