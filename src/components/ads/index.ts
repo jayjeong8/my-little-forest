@@ -1,0 +1,1 @@
+export { MockAdButton } from './MockAdButton';
