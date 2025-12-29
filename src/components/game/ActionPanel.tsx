@@ -1,11 +1,12 @@
 "use client";
 
 import type { Tree, TilePosition, Seed } from "@/types/game";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
 import { CooldownTimer } from "@/components/ui/CooldownTimer";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { useToast } from "@/components/ui/Toast";
+import { useCooldown, useCooldowns } from "@/hooks/useCooldowns";
 import { useSeeds } from "@/hooks/useSeeds";
 import { useTrees } from "@/hooks/useTrees";
 import { useTutorial } from "@/hooks/useTutorial";
@@ -58,6 +59,29 @@ function SeedPicker({ seeds, selectedSeed, onSelect }: SeedPickerProps) {
   );
 }
 
+function FullScreenAd({ progress }: { progress: number }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+      <div className="w-full max-w-md p-8 text-center text-white">
+        <div className="mb-8 text-6xl">📺</div>
+        <h2 className="mb-2 text-2xl font-bold">광고 시청 중</h2>
+        <p className="mb-8 text-gray-400">
+          광고가 끝나면 비료를 받을 수 있어요
+        </p>
+        <div className="mb-4 h-3 w-full overflow-hidden rounded-full bg-gray-700">
+          <div
+            className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <p className="text-lg text-gray-300">
+          {progress < 100 ? `${Math.round(progress)}%` : "🎁 보상 지급 중..."}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 interface ActionPanelProps {
   selectedTile: {
     position: TilePosition;
@@ -75,23 +99,23 @@ export function ActionPanel({
   hasSeed,
 }: ActionPanelProps) {
   const { position } = selectedTile;
-  const {
-    waterTree,
-    fertilizeTree,
-    plantSeed,
-    canWater,
-    canFertilize,
-    getTreeAt,
-  } = useTrees();
+  const { waterTree, fertilizeTree, plantSeed, canWater, getTreeAt } =
+    useTrees();
   const { seeds } = useSeeds();
   const { advanceTutorial, isStep } = useTutorial();
   const { showToast } = useToast();
+  const fertilizerCooldown = useCooldown("fertilizer");
+  const { startCooldown } = useCooldowns();
 
   // store에서 최신 나무 데이터 가져오기 (실시간 업데이트)
   const tree = getTreeAt(position);
 
   const [selectedSeedForPlanting, setSelectedSeedForPlanting] =
     useState<Seed | null>(seeds.length > 0 ? seeds[0] : null);
+
+  // 비료 광고 상태
+  const [isWatchingAd, setIsWatchingAd] = useState(false);
+  const [adProgress, setAdProgress] = useState(0);
 
   const handleWater = () => {
     if (!tree) return;
@@ -109,21 +133,53 @@ export function ActionPanel({
     }
   };
 
-  const handleFertilize = () => {
-    if (!tree) return;
+  const handleFertilize = useCallback(() => {
+    if (!tree || isWatchingAd || fertilizerCooldown.isOnCooldown) return;
 
-    const success = fertilizeTree(tree.id);
+    // 광고 시청 시작
+    setIsWatchingAd(true);
+    setAdProgress(0);
 
-    if (success) {
-      showToast("🌿 비료를 주었어요!", "success");
+    const interval = setInterval(() => {
+      setAdProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
 
-      if (isStep("fertilize_intro")) {
-        advanceTutorial();
+          return 100;
+        }
+
+        return prev + 10;
+      });
+    }, 300);
+
+    // 3초 후 비료 적용
+    setTimeout(() => {
+      clearInterval(interval);
+      setIsWatchingAd(false);
+      setAdProgress(0);
+
+      // 비료 적용
+      const success = fertilizeTree(tree.id);
+
+      if (success) {
+        startCooldown("fertilizer");
+        showToast("🌿 비료를 주었어요!", "success");
+
+        if (isStep("fertilize_intro")) {
+          advanceTutorial();
+        }
       }
-    } else {
-      showToast("비료 쿨다운 중이에요", "warning");
-    }
-  };
+    }, 3000);
+  }, [
+    tree,
+    isWatchingAd,
+    fertilizerCooldown.isOnCooldown,
+    fertilizeTree,
+    startCooldown,
+    showToast,
+    isStep,
+    advanceTutorial,
+  ]);
 
   const handlePlant = () => {
     if (tree || !selectedSeedForPlanting) return;
@@ -186,11 +242,15 @@ export function ActionPanel({
                 variant="secondary"
                 className="flex-1"
                 onClick={handleFertilize}
-                disabled={!canFertilize}
+                disabled={fertilizerCooldown.isOnCooldown || isWatchingAd}
               >
-                🌿 비료
-                {!canFertilize && (
-                  <CooldownTimer type="fertilizer" className="ml-2" />
+                {fertilizerCooldown.isOnCooldown ? (
+                  <>
+                    🌿 비료
+                    <CooldownTimer type="fertilizer" className="ml-2" />
+                  </>
+                ) : (
+                  "📺 비료 (광고)"
                 )}
               </Button>
             </>
@@ -198,6 +258,7 @@ export function ActionPanel({
         </div>
 
         <CloseButton onClick={onClose} />
+        {isWatchingAd && <FullScreenAd progress={adProgress} />}
       </div>
     );
   }

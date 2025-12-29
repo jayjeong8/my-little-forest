@@ -35,11 +35,8 @@ function GameScreen() {
         {/* 숲 그리드 */}
         <ForestGrid />
 
-        {/* 광고 버튼 */}
-        <div className="grid grid-cols-2 gap-3">
-          <MockAdButton type="fertilizer" />
-          <MockAdButton type="seed" />
-        </div>
+        {/* 씨앗 광고 버튼 */}
+        <MockAdButton type="seed" />
 
         {/* 씨앗 인벤토리 */}
         <SeedInventory />
