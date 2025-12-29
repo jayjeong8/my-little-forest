@@ -132,7 +132,18 @@ export const useCooldownStore = create<CooldownStore>()(
     }),
     {
       name: STORAGE_KEYS.cooldowns,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => {
+        if (typeof window === "undefined") {
+          return {
+            getItem: () => null,
+            setItem: () => {},
+            removeItem: () => {},
+          };
+        }
+
+        return localStorage;
+      }),
+      skipHydration: true,
     },
   ),
 );

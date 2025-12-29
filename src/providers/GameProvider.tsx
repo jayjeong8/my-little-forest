@@ -3,6 +3,8 @@
 import { ReactNode, useEffect, useState } from "react";
 import { ToastProvider } from "@/components/ui/Toast";
 import { checkAndMigrate } from "@/lib/storage";
+import { useCooldownStore } from "@/stores/cooldownStore";
+import { useGameStore } from "@/stores/gameStore";
 
 interface GameProviderProps {
   children: ReactNode;
@@ -12,10 +14,18 @@ export function GameProvider({ children }: GameProviderProps) {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    // 마이그레이션 체크
-    checkAndMigrate().then(() => {
+    const hydrate = async () => {
+      // 마이그레이션 체크
+      await checkAndMigrate();
+
+      // Zustand store 수동 hydration
+      await useGameStore.persist.rehydrate();
+      await useCooldownStore.persist.rehydrate();
+
       setIsHydrated(true);
-    });
+    };
+
+    hydrate();
   }, []);
 
   // SSR에서는 로딩 표시

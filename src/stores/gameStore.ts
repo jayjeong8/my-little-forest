@@ -329,7 +329,17 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: STORAGE_KEYS.game,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => {
+        if (typeof window === "undefined") {
+          return {
+            getItem: () => null,
+            setItem: () => {},
+            removeItem: () => {},
+          };
+        }
+
+        return localStorage;
+      }),
       partialize: (state) => ({
         version: state.version,
         trees: state.trees,
@@ -340,6 +350,7 @@ export const useGameStore = create<GameStore>()(
         createdAt: state.createdAt,
         lastSavedAt: state.lastSavedAt,
       }),
+      skipHydration: true,
     },
   ),
 );
