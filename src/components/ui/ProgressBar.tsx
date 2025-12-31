@@ -15,10 +15,10 @@ const sizeStyles = {
 };
 
 const colorStyles = {
-  green: "bg-green-500",
-  blue: "bg-blue-500",
-  yellow: "bg-yellow-500",
-  purple: "bg-purple-500",
+  green: "bg-[var(--eco-green-500)]",
+  blue: "bg-[var(--eco-green-400)]",
+  yellow: "bg-[var(--eco-yellow-400)]",
+  purple: "bg-[var(--tier-rare)]",
 };
 
 export function ProgressBar({
@@ -36,18 +36,20 @@ export function ProgressBar({
       {/* 라벨 */}
       {showLabel && (
         <div className="mb-1 flex justify-between text-sm">
-          <span className="text-gray-600">
+          <span className="text-[var(--eco-brown-400)]">
             {current}/{max}
           </span>
           {isComplete && (
-            <span className="font-medium text-green-600">완료!</span>
+            <span className="font-medium text-[var(--eco-green-500)]">
+              수확 가능!
+            </span>
           )}
         </div>
       )}
 
       {/* 프로그레스 바 */}
       <div
-        className={`w-full overflow-hidden rounded-full bg-gray-200 ${sizeStyles[size]} `}
+        className={`w-full overflow-hidden rounded-full bg-[var(--eco-brown-100)] ${sizeStyles[size]} `}
       >
         <div
           className={`h-full rounded-full transition-all duration-300 ease-out ${colorStyles[color]} ${isComplete ? "animate-pulse" : ""} `}

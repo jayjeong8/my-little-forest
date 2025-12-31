@@ -1,7 +1,10 @@
 "use client";
 
 import type { Tree as TreeType, TilePosition } from "@/types/game";
-import { Tree as TreeComponent } from "./Tree";
+import {
+  TreeIllustration,
+  EmptyTileIllustration,
+} from "@/components/illustrations";
 
 interface TileProps {
   position: TilePosition;
@@ -16,29 +19,27 @@ export function Tile({ position, tree, isSelected, onSelect }: TileProps) {
   };
 
   return (
-    <div
-      className={`group aspect-square rounded-lg transition-all duration-200 ${
+    <button
+      onClick={handleClick}
+      className={`group aspect-square overflow-hidden rounded-2xl border-2 transition-all duration-200 ${
         tree
-          ? "bg-green-100 hover:bg-green-200"
-          : "cursor-pointer bg-amber-100 hover:bg-amber-200"
-      } ${isSelected ? "ring-2 ring-blue-500" : ""} `}
+          ? "border-[var(--eco-green-200)] bg-[var(--eco-green-50)]"
+          : "border-[var(--eco-brown-200)] bg-[var(--eco-sand)] hover:border-[var(--eco-brown-300)] hover:bg-[var(--eco-brown-100)]"
+      } ${isSelected ? "ring-2 ring-[var(--eco-green-400)] ring-offset-2" : ""}`}
     >
       {tree ? (
-        <TreeComponent
-          tree={tree}
-          isSelected={isSelected}
-          onClick={handleClick}
-        />
+        <div className="flex h-full w-full items-center justify-center p-1">
+          <TreeIllustration
+            status={tree.status}
+            tier={tree.tier}
+            className="h-full w-full"
+          />
+        </div>
       ) : (
-        <button
-          onClick={handleClick}
-          className="group flex h-full w-full items-center justify-center"
-        >
-          <span className="text-2xl opacity-30 transition-opacity group-hover:opacity-60">
-            +
-          </span>
-        </button>
+        <div className="flex h-full w-full items-center justify-center p-1 opacity-60 transition-opacity group-hover:opacity-100">
+          <EmptyTileIllustration className="h-full w-full" />
+        </div>
       )}
-    </div>
+    </button>
   );
 }

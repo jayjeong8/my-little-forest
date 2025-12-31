@@ -21,7 +21,7 @@ function CloseButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="mt-3 w-full py-2 text-sm text-gray-500 hover:text-gray-700"
+      className="mt-3 w-full py-2 text-sm text-[var(--eco-brown-400)] transition-colors hover:text-[var(--eco-brown-600)]"
     >
       닫기
     </button>
@@ -41,14 +41,17 @@ function SeedPicker({ seeds, selectedSeed, onSelect }: SeedPickerProps) {
         <button
           key={seed.id}
           onClick={() => onSelect(seed)}
-          className={`w-full rounded-lg p-2 text-left transition-colors ${
+          className={`w-full rounded-xl border-2 p-3 text-left transition-all ${
             selectedSeed?.id === seed.id
-              ? "ring-2 ring-green-500 " + TIER_BG_COLORS[seed.tier]
-              : "bg-gray-50 hover:bg-gray-100"
+              ? "border-[var(--eco-green-300)] ring-2 ring-[var(--eco-green-400)] " +
+                TIER_BG_COLORS[seed.tier]
+              : "border-[var(--eco-beige)] bg-[var(--eco-sand)] hover:border-[var(--eco-brown-200)] hover:bg-[var(--eco-brown-100)]"
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="font-medium">{SPECIES_NAMES[seed.species]}</span>
+            <span className="font-medium text-[var(--eco-brown-600)]">
+              {SPECIES_NAMES[seed.species]}
+            </span>
             <span className={`text-sm ${TIER_COLORS[seed.tier]}`}>
               {TIER_NAMES[seed.tier]}
             </span>
@@ -61,21 +64,27 @@ function SeedPicker({ seeds, selectedSeed, onSelect }: SeedPickerProps) {
 
 function FullScreenAd({ progress }: { progress: number }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
-      <div className="w-full max-w-md p-8 text-center text-white">
-        <div className="mb-8 text-6xl">📺</div>
-        <h2 className="mb-2 text-2xl font-bold">광고 시청 중</h2>
-        <p className="mb-8 text-gray-400">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--eco-brown-600)]/95">
+      <div className="w-full max-w-md p-8 text-center">
+        <div className="mb-6 flex justify-center">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[var(--eco-green-100)]">
+            <span className="text-5xl">🌿</span>
+          </div>
+        </div>
+        <h2 className="mb-2 text-2xl font-bold text-[var(--eco-cream)]">
+          광고 시청 중
+        </h2>
+        <p className="mb-8 text-[var(--eco-brown-200)]">
           광고가 끝나면 비료를 받을 수 있어요
         </p>
-        <div className="mb-4 h-3 w-full overflow-hidden rounded-full bg-gray-700">
+        <div className="mb-4 h-3 w-full overflow-hidden rounded-full bg-[var(--eco-brown-500)]">
           <div
-            className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
+            className="h-full bg-gradient-to-r from-[var(--eco-green-300)] to-[var(--eco-green-500)] transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className="text-lg text-gray-300">
-          {progress < 100 ? `${Math.round(progress)}%` : "🎁 보상 지급 중..."}
+        <p className="text-lg text-[var(--eco-cream)]">
+          {progress < 100 ? `${Math.round(progress)}%` : "보상 지급 중..."}
         </p>
       </div>
     </div>
@@ -203,11 +212,13 @@ export function ActionPanel({
     const isMature = tree.status === "mature";
 
     return (
-      <div className="mt-4 rounded-xl bg-white p-4 shadow-lg">
+      <div className="mt-4 rounded-2xl border-2 border-[var(--eco-green-200)] bg-[var(--eco-cream)] p-4 shadow-md">
         <div className="mb-4">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-lg font-bold">{SPECIES_NAMES[tree.species]}</h3>
-            <span className="text-sm text-gray-500">
+            <h3 className="text-lg font-bold text-[var(--eco-green-600)]">
+              {SPECIES_NAMES[tree.species]}
+            </h3>
+            <span className="rounded-full bg-[var(--eco-green-100)] px-3 py-1 text-sm text-[var(--eco-green-500)]">
               {TIER_NAMES[tree.tier]}
             </span>
           </div>
@@ -264,12 +275,16 @@ export function ActionPanel({
   }
 
   return (
-    <div className="mt-4 rounded-xl bg-white p-4 shadow-lg">
-      <h3 className="mb-4 text-lg font-bold">빈 땅</h3>
+    <div className="mt-4 rounded-2xl border-2 border-[var(--eco-brown-200)] bg-[var(--eco-cream)] p-4 shadow-md">
+      <h3 className="mb-4 text-lg font-bold text-[var(--eco-brown-500)]">
+        빈 땅
+      </h3>
 
       {hasSeed ? (
         <div>
-          <p className="mb-3 text-gray-600">심을 씨앗을 선택하세요</p>
+          <p className="mb-3 text-[var(--eco-brown-400)]">
+            심을 씨앗을 선택하세요
+          </p>
           <SeedPicker
             seeds={seeds}
             selectedSeed={selectedSeedForPlanting}
@@ -281,11 +296,11 @@ export function ActionPanel({
             onClick={handlePlant}
             disabled={!selectedSeedForPlanting}
           >
-            🌱 씨앗 심기
+            씨앗 심기
           </Button>
         </div>
       ) : (
-        <p className="text-gray-500">
+        <p className="text-[var(--eco-brown-400)]">
           씨앗이 없어요. 광고를 시청하거나 나무를 수확해서 씨앗을 얻으세요.
         </p>
       )}

@@ -75,7 +75,7 @@ export function ForestGrid() {
     <div className="mx-auto w-full max-w-md">
       {/* 그리드 */}
       <div
-        className="grid gap-2 rounded-xl bg-green-50 p-4"
+        className="grid gap-2 rounded-2xl border-2 border-[var(--eco-green-200)] bg-[var(--eco-green-50)] p-3 shadow-sm"
         style={{
           gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
         }}

@@ -34,25 +34,32 @@ interface FullScreenAdProps {
 
 function FullScreenAd({ progress, adType }: FullScreenAdProps) {
   const rewardText = adType === "seed" ? "씨앗" : "비료";
+  const icon = adType === "seed" ? "🌰" : "🌿";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
-      <div className="w-full max-w-md p-8 text-center text-white">
-        <div className="mb-8 text-6xl">📺</div>
-        <h2 className="mb-2 text-2xl font-bold">광고 시청 중</h2>
-        <p className="mb-8 text-gray-400">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--eco-brown-600)]/95">
+      <div className="w-full max-w-md p-8 text-center">
+        <div className="mb-6 flex justify-center">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[var(--eco-green-100)]">
+            <span className="text-5xl">{icon}</span>
+          </div>
+        </div>
+        <h2 className="mb-2 text-2xl font-bold text-[var(--eco-cream)]">
+          광고 시청 중
+        </h2>
+        <p className="mb-8 text-[var(--eco-brown-200)]">
           광고가 끝나면 {rewardText}을 받을 수 있어요
         </p>
 
-        <div className="mb-4 h-3 w-full overflow-hidden rounded-full bg-gray-700">
+        <div className="mb-4 h-3 w-full overflow-hidden rounded-full bg-[var(--eco-brown-500)]">
           <div
-            className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
+            className="h-full bg-gradient-to-r from-[var(--eco-green-300)] to-[var(--eco-green-500)] transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
 
-        <p className="text-lg text-gray-300">
-          {progress < 100 ? `${Math.round(progress)}%` : "🎁 보상 지급 중..."}
+        <p className="text-lg text-[var(--eco-cream)]">
+          {progress < 100 ? `${Math.round(progress)}%` : "보상 지급 중..."}
         </p>
       </div>
     </div>

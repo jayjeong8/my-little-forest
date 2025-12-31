@@ -9,11 +9,15 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles = {
-  primary: "bg-blue-500 hover:bg-blue-600 text-white",
-  secondary: "bg-gray-200 hover:bg-gray-300 text-gray-800",
-  success: "bg-green-500 hover:bg-green-600 text-white",
-  warning: "bg-yellow-500 hover:bg-yellow-600 text-white",
-  danger: "bg-red-500 hover:bg-red-600 text-white",
+  primary:
+    "bg-[var(--eco-green-400)] hover:bg-[var(--eco-green-500)] text-white",
+  secondary:
+    "bg-[var(--eco-brown-100)] hover:bg-[var(--eco-brown-200)] text-[var(--eco-brown-600)]",
+  success:
+    "bg-[var(--eco-green-500)] hover:bg-[var(--eco-green-600)] text-white",
+  warning:
+    "bg-[var(--eco-yellow-400)] hover:bg-[var(--eco-yellow-500)] text-[var(--eco-brown-600)]",
+  danger: "bg-[var(--eco-coral)] hover:bg-red-400 text-white",
 };
 
 const sizeStyles = {
@@ -41,7 +45,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         disabled={isDisabled}
-        className={`inline-flex items-center justify-center rounded-lg font-medium transition-colors duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${variantStyles[variant]} ${sizeStyles[size]} ${className} `}
+        className={`inline-flex items-center justify-center rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md focus:ring-2 focus:ring-[var(--eco-green-300)] focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${variantStyles[variant]} ${sizeStyles[size]} ${className} `}
         {...props}
       >
         {isLoading ? (

@@ -4,15 +4,49 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --background: #faf8f5;
+  --foreground: #3d3d3d;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* 에코 프렌들리 파스텔 팔레트 */
+  --eco-cream: #faf8f5;
+  --eco-sand: #f5f0e8;
+  --eco-beige: #e8e0d5;
+
+  /* 파스텔 그린 계열 */
+  --eco-green-50: #f0f7f4;
+  --eco-green-100: #d8ede2;
+  --eco-green-200: #b5dcc6;
+  --eco-green-300: #8bc5a5;
+  --eco-green-400: #6bb389;
+  --eco-green-500: #4a9d6e;
+  --eco-green-600: #3d8259;
+
+  /* 파스텔 브라운 계열 */
+  --eco-brown-100: #f0e6dc;
+  --eco-brown-200: #ddd0c0;
+  --eco-brown-300: #c4b199;
+  --eco-brown-400: #a8917a;
+  --eco-brown-500: #8b7355;
+
+  /* 파스텔 블루 계열 */
+  --eco-blue-100: #e8f4f8;
+  --eco-blue-200: #c5e4ed;
+  --eco-blue-300: #9dd1e2;
+  --eco-blue-400: #6bb8d1;
+
+  /* 파스텔 옐로우 계열 */
+  --eco-yellow-100: #fef9e7;
+  --eco-yellow-200: #fcf0c3;
+  --eco-yellow-300: #f9e29a;
+  --eco-yellow-400: #f5d06b;
+
+  /* 티어별 파스텔 색상 */
+  --tier-common: #b5dcc6;
+  --tier-uncommon: #9dd1e2;
+  --tier-rare: #c5b8e8;
+  --tier-epic: #e8b8d4;
+  --tier-legendary: #f9d89a;
+  --tier-mythic: #f5b8b8;
 }
 
 body {

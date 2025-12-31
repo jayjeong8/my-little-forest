@@ -15,7 +15,7 @@ export function CooldownTimer({ type, className = "" }: CooldownTimerProps) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1 font-mono text-sm text-gray-500 ${className} `}
+      className={`inline-flex items-center gap-1 font-mono text-sm text-[var(--eco-brown-400)] ${className} `}
     >
       <svg
         className="h-4 w-4"
